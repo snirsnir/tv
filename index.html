@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מה חדש בטכנודע?</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;700;900&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Heebo', sans-serif;
+            background: linear-gradient(-45deg, 
+                #ff0000, #ff7300, #fffb00, #48ff00, 
+                #00ffd5, #002bff, #7a00ff, #ff00c8, 
+                #000000, #6f0000, #00008b, #006400, 
+                #ff1493, #4b0082, #b8860b, #2f4f4f);
+            background-size: 1000% 1000%;
+            animation: wild-gradient 120s ease infinite alternate;
+            height: 100vh;
+            overflow: hidden;
+            color: white;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        @keyframes wild-gradient {
+            0% { background-position: 0% 0%; }
+            10% { background-position: 80% 0%; }
+            20% { background-position: 100% 20%; }
+            30% { background-position: 50% 50%; }
+            40% { background-position: 0% 100%; }
+            50% { background-position: 50% 20%; }
+            60% { background-position: 100% 50%; }
+            70% { background-position: 70% 100%; }
+            80% { background-position: 0% 50%; }
+            90% { background-position: 50% 0%; }
+            100% { background-position: 100% 100%; }
+        }
+        
+        .header {
+            text-align: center;
+            padding: 20px;
+            z-index: 10;
+        }
+        
+        .title {
+            font-size: 4rem;
+            font-weight: 900;
+            margin-bottom: 15px;
+            text-shadow: 0px 4px 10px rgba(0,0,0,0.4);
+            letter-spacing: 2px;
+            background: linear-gradient(to right, #ffffff, #88e1ff, #ff9ee5);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: titleShine 6s linear infinite;
+        }
+        
+        @keyframes titleShine {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .subtitle {
+            font-size: 1.7rem;
+            font-weight: 400;
+            margin-bottom: 20px;
+            text-shadow: 0px 3px 7px rgba(0,0,0,0.3);
+            opacity: 0.9;
+        }
+        
+        .content-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+        }
+        
+        .media-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            max-width: 1200px;
+            margin: 0 auto;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+            border-radius: 20px;
+            overflow: hidden;
+            background-color: rgba(0,0,0,0.2);
+            border: 2px solid rgba(255,255,255,0.2);
+            backdrop-filter: blur(5px);
+        }
+        
+        .media-item {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 1.8s ease-in-out;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+        }
+        
+        .media-item.active {
+            opacity: 1;
+        }
+        
+        .media-item img, .media-item video {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+        
+        .progress-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 5px;
+            background-color: rgba(255,255,255,0.7);
+            width: 0%;
+            transition: width 0.1s linear;
+        }
+        
+        .navigation {
+            position: absolute;
+            bottom: 20px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            z-index: 20;
+        }
+        
+        .nav-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: rgba(255,255,255,0.5);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-dot.active {
+            background-color: white;
+            transform: scale(1.2);
+        }
+        
+        .techno-logo {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 220px;
+            height: auto;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            z-index: 11;
+            transition: transform 0.3s ease;
+        }
+        
+        .techno-logo:hover {
+            transform: scale(1.05);
+        }
+        
+        .techno-logo img {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 10px;
+        }
+        
+        .date-time {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 1.2rem;
+            color: white;
+            text-shadow: 0px 2px 5px rgba(0,0,0,0.2);
+            z-index: 11;
+        }
+
+        .media-item.fallback {
+            background-color: #005a8c;
+            color: white;
+            font-size: 2rem;
+            padding: 2rem;
+            text-align: center;
+        }
+        
+        @media (max-width: 768px) {
+            .title {
+                font-size: 2.5rem;
+            }
+            
+            .subtitle {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="techno-logo">
+        <img src="logo.png" alt="לוגו טכנודע">
+    </div>
+    <div class="date-time" id="dateTime"></div>
+    
+    <div class="header">
+        <h1 class="title">מה חדש בטכנודע חדרה?</h1>
+    </div>
+    
+    <div class="content-container">
+        <div class="media-container" id="mediaContainer">
+            <!-- Media items will be loaded here dynamically -->
+            <div class="media-item active fallback">
+                <div>טוען תוכן...</div>
+            </div>
+        </div>
+        <div class="progress-bar" id="progressBar"></div>
+    </div>
+    
+    <div class="navigation" id="navigation">
+        <!-- Navigation dots will be added here dynamically -->
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Update date and time
+            function updateDateTime() {
+                const now = new Date();
+                const options = { 
+                    weekday: 'long', 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                };
+                document.getElementById('dateTime').textContent = now.toLocaleDateString('he-IL', options);
+            }
+            updateDateTime();
+            setInterval(updateDateTime, 60000); // Update every minute
+            
+            // Media files handling
+            const mediaContainer = document.getElementById('mediaContainer');
+            const progressBar = document.getElementById('progressBar');
+            const navigationContainer = document.getElementById('navigation');
+            const DISPLAY_DURATION = 20000; // 20 seconds
+            let currentIndex = 0;
+            let mediaFiles = [];
+            let loadedFiles = [];
+            let timer;
+            
+            // Function to load default sample content
+            function loadDefaultContent() {
+                mediaFiles = [
+                    { path: 'https://via.placeholder.com/800x600/1976D2/FFFFFF?text=1.+סדנת+רובוטיקה+חדשה', type: 'image' },
+                    { path: 'https://via.placeholder.com/800x600/00796B/FFFFFF?text=2.+תערוכת+מדע+חדשנית', type: 'image' },
+                    { path: 'https://via.placeholder.com/800x600/E65100/FFFFFF?text=3.+סדנאות+קיץ+לילדים', type: 'image' }
+                ];
+                
+                displayContent();
+            }
+            
+            // Function to scan directory for files
+            function scanForFiles() {
+                // Clear existing arrays
+                mediaFiles = [];
+                loadedFiles = [];
+                
+                // First try files in the root directory
+                const fileTypes = [
+                    { extensions: ['jpg', 'jpeg', 'png', 'gif'], type: 'image' },
+                    { extensions: ['mp4', 'webm'], type: 'video' }
+                ];
+                
+                // Helper function to check if a file exists
+                function checkFileExists(path) {
+                    return new Promise((resolve) => {
+                        const request = new XMLHttpRequest();
+                        request.open('HEAD', path, true);
+                        request.onreadystatechange = function() {
+                            if (request.readyState === 4) {
+                                resolve(request.status === 200);
+                            }
+                        };
+                        request.send();
+                    });
+                }
+                
+                // Add all possible files to check
+                let filesToCheck = [];
+                
+                // First try files directly in the directory without src/ prefix
+                for (let i = 1; i <= 10; i++) {
+                    fileTypes.forEach(fileType => {
+                        fileType.extensions.forEach(ext => {
+                            filesToCheck.push({
+                                path: `${i}.${ext}`,
+                                type: fileType.type
+                            });
+                        });
+                    });
+                }
+                
+                // Then try files in the src/ directory
+                for (let i = 1; i <= 10; i++) {
+                    fileTypes.forEach(fileType => {
+                        fileType.extensions.forEach(ext => {
+                            filesToCheck.push({
+                                path: `src/${i}.${ext}`,
+                                type: fileType.type
+                            });
+                        });
+                    });
+                }
+                
+                // Check each file
+                Promise.all(filesToCheck.map(async file => {
+                    const exists = await checkFileExists(file.path);
+                    if (exists) {
+                        mediaFiles.push(file);
+                    }
+                })).then(() => {
+                    console.log('Found media files:', mediaFiles);
+                    
+                    if (mediaFiles.length > 0) {
+                        // Sort files by number in filename
+                        mediaFiles.sort((a, b) => {
+                            const numA = parseInt(a.path.match(/\d+/)[0]);
+                            const numB = parseInt(b.path.match(/\d+/)[0]);
+                            return numA - numB;
+                        });
+                        
+                        displayContent();
+                    } else {
+                        console.log('No media files found, loading default content');
+                        loadDefaultContent();
+                    }
+                });
+            }
+            
+            // Function to display content
+            function displayContent() {
+                // Clear existing content
+                mediaContainer.innerHTML = '';
+                navigationContainer.innerHTML = '';
+                
+                // Create media elements
+                mediaFiles.forEach((file, index) => {
+                    const mediaItem = document.createElement('div');
+                    mediaItem.className = `media-item ${index === 0 ? 'active' : ''}`;
+                    mediaItem.dataset.index = index;
+                    
+                    if (file.type === 'video') {
+                        const video = document.createElement('video');
+                        video.src = file.path;
+                        video.autoplay = true;
+                        video.muted = true;
+                        video.loop = true;
+                        video.playsInline = true;
+                        mediaItem.appendChild(video);
+                    } else {
+                        const img = document.createElement('img');
+                        img.src = file.path;
+                        img.alt = `תמונה ${index + 1}`;
+                        mediaItem.appendChild(img);
+                    }
+                    
+                    mediaContainer.appendChild(mediaItem);
+                    
+                    // Create navigation dot
+                    const navDot = document.createElement('div');
+                    navDot.className = `nav-dot ${index === 0 ? 'active' : ''}`;
+                    navDot.dataset.index = index;
+                    navDot.addEventListener('click', () => {
+                        clearInterval(timer);
+                        showMedia(index);
+                        startRotation();
+                    });
+                    navigationContainer.appendChild(navDot);
+                });
+                
+                // Start rotation
+                startRotation();
+            }
+            
+            function showMedia(index) {
+                // Hide all media items
+                const mediaItems = document.querySelectorAll('.media-item');
+                mediaItems.forEach(item => item.classList.remove('active'));
+                
+                // Show selected media item if it exists
+                const selectedItem = document.querySelector(`.media-item[data-index="${index}"]`);
+                if (selectedItem) {
+                    selectedItem.classList.add('active');
+                    
+                    // Update navigation dots
+                    const navDots = document.querySelectorAll('.nav-dot');
+                    navDots.forEach(dot => {
+                        dot.classList.remove('active');
+                        if (parseInt(dot.dataset.index) === index) {
+                            dot.classList.add('active');
+                        }
+                    });
+                    
+                    // Reset progress bar
+                    progressBar.style.width = '0%';
+                    currentIndex = index;
+                    
+                    // Ensure videos play
+                    const activeVideo = selectedItem.querySelector('video');
+                    if (activeVideo) {
+                        activeVideo.play().catch(e => console.log('Video playback error:', e));
+                    }
+                }
+            }
+            
+            function nextMedia() {
+                if (mediaFiles.length === 0) return;
+                
+                const nextIndex = (currentIndex + 1) % mediaFiles.length;
+                showMedia(nextIndex);
+            }
+            
+            function startRotation() {
+                // Clear existing timer
+                if (timer) clearInterval(timer);
+                
+                // Reset progress
+                let progress = 0;
+                progressBar.style.width = '0%';
+                
+                // Update progress bar every 100ms
+                const progressInterval = setInterval(() => {
+                    progress += (100 / (DISPLAY_DURATION / 100));
+                    progressBar.style.width = `${Math.min(progress, 100)}%`;
+                }, 100);
+                
+                // Set timer for next media
+                timer = setTimeout(() => {
+                    clearInterval(progressInterval);
+                    nextMedia();
+                    startRotation();
+                }, DISPLAY_DURATION);
+            }
+            
+            // Add keyboard controls
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowRight') {
+                    clearInterval(timer);
+                    const prevIndex = (currentIndex - 1 + mediaFiles.length) % mediaFiles.length;
+                    showMedia(prevIndex);
+                    startRotation();
+                } else if (e.key === 'ArrowLeft') {
+                    clearInterval(timer);
+                    const nextIndex = (currentIndex + 1) % mediaFiles.length;
+                    showMedia(nextIndex);
+                    startRotation();
+                }
+            });
+            
+            // Start the application
+            scanForFiles();
+        });
+    </script>
+</body>
+</html>
